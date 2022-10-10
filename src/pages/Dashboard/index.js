@@ -1,16 +1,36 @@
 
 import './dashboard.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { FiMessageSquare, FiPlus, FiSearch, FiEdit2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import firebase from '../../services/firebaseConnection';
 
 export default function Dashboard(){
-  const [chamados, setChamados] = useState([1]);
+  const listRef = firebase.firestore().collection('chamados').orderBy('created', 'desc')
+  const [chamados, setChamados] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [carregarMais, setCarregarMais] = useState(false)
 
+  useEffect(()=>{
+    
+    carregarChamados();
+    
+    return () =>{}
+  }, [])
 
+  async function carregarChamados(){
+    await listRef.limit(5)
+    .get()
+    .then(()=>{
+
+    })
+    .catch((error)=>{
+      console.log(error)
+    })
+  }
   return(
     <div>
       <Header/>
@@ -52,7 +72,7 @@ export default function Dashboard(){
                   <td data-label="Assunto">Suporte</td>
                   <td data-label="Status">
                     <span className="badge" style={{backgroundColor: '#5cb85c' }}>Em aberto</span>
-                  </td>
+                  </td>             
                   <td data-label="Cadastrado">20/06/2021</td>
                   <td data-label="#">
                     <button className="action" style={{backgroundColor: '#3583f6' }}>
